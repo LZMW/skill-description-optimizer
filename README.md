@@ -6,7 +6,7 @@
 
 **Meta-skill for optimizing skill descriptions using SDS standard and seven core techniques.**
 
-A comprehensive optimization framework that systematically analyzes and improves Claude Skill descriptions to maximize trigger rates and discoverability. Built upon data-driven analysis of 8 official skills, implementing the COSTAR framework and multi-expert collaboration patterns.
+A comprehensive optimization framework that systematically analyzes and improves Claude Skill descriptions to maximize trigger rates and discoverability. 
 
 ---
 
