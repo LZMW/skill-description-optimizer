@@ -452,10 +452,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author / 作者
 
-Created with LZMW by skill-description-optimizer meta-skill
+Created with LZMW 
 Powered by GLM-4.7
 
-由 LZMW 创建，使用 skill-description-optimizer 元技能
+由 LZMW 创建，
 由 GLM-4.7 驱动
 
 ---
