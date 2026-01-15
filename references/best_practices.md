@@ -1,6 +1,6 @@
 # Skill Description 编写最佳实践
 
-> 本文档基于 `C:\Users\Administrator\AppData\Roaming\CherryStudio\.claude\plans\buzzing-painting-storm.md` 整理，提供 skill description 编写的核心标准、模板和技巧。
+> 本文档基于官方高品质skill学习整理，提供 skill description 编写的核心标准、模板和技巧。
 
 ---
 
