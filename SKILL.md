@@ -10,13 +10,11 @@ description: "Meta-skill for optimizing skill descriptions using SDS standard an
 ## 参考资料说明
 
 在执行优化任务时，应参考 `references/best_practices.md` 获取：
-- SDS 标准（核心规范）：格式、长度、禁止字符
-- 万能公式：[功能概述] + [触发条件] + [场景列表] + [兜底条款]
-- 五大模板：文件处理类、工具类、设计类、元技能类、平台特定类
-- 七大技巧：编号列表、括号示例、关键词重复、技术栈标注、兜底条款、否定约束、排除条件
+- SDS 标准、万能公式、五大模板、七大技巧
 - 触发短语库、质量检查清单、数据指标
+- 完整示例和常见错误
 
-**何时读取**：在 Phase 2 诊断和 Phase 3 优化执行阶段，应读取此文档以确保优化方案符合最佳实践标准。
+**何时读取**：Phase 2（冲突检测）和 Phase 3（优化执行）开始前
 
 ---
 
@@ -38,20 +36,19 @@ Skill Description 是 Claude 判断是否使用 skill 的唯一依据，但许�
 - 最佳实践文档（通过 Read 读取）
 - 用户提供的待优化 description
 
-## 1.1 少样本示例
+## 1.1 核心示例
 
-* **Example 1 Input**:
-"帮我优化这个 skill description：'Tool for creating PDF documents.'"
+**Input**: "帮我优化这个 skill description：'Tool for creating PDF documents.'"
 
-* **Example 1 Output**:
+**Output**:
 
 **Phase 1: 搜索分析**
-- 发现现有 skills：4个（skill-creator, toyota-8step-problem-solving, cybersecurity-expert, super-piggy-skill-creator）
+- 发现现有 skills：4个
 - 触发词模式分析：现有 descriptions 平均包含 "skill" × 3次，触发场景数平均 3.5个
 - 冲突检测：未发现与 "PDF" 或 "document" 相关的现有 skill
 
 **Phase 2: 优化执行**
-- 应用万能公式：[功能概述] + [触发条件] + [场景列表] + [兜底条款]
+- 应用万能公式（参考 `references/best_practices.md`）
 - 选择模板：模板 1（文件处理类）
 - 优化后 description：
   ```yaml
@@ -59,46 +56,17 @@ Skill Description 是 Claude 判断是否使用 skill 的唯一依据，但许�
   ```
 - 质量检查：字符数 220（符合 180-330），触发场景数 4个，关键词 "PDF" × 3次
 
-* **Example 2 Input**:
-"我想创建一个新 skill，帮我写一个高触发率的 description，功能是帮助用户编写 Python 代码"
+## 1.2 专家协同模型
 
-* **Example 2 Output**:
+| 专家角色 | 职责 |
+|---------|------|
+| **模式分析专家** | 分析现有 skill descriptions 的触发词分布、关键词频率、场景数量、字符长度等量化指标 |
+| **冲突检测专家** | 检测优化后的 description 是否与现有 skills 存在功能重叠、触发词冲突、领域竞争 |
+| **优化架构师** | 选择合适的模板，应用万能公式和七大技巧（参考 `references/best_practices.md`） |
+| **质量审计官** | 执行质量检查，验证 description 是否符合 SDS 标准（参考 `references/best_practices.md`） |
 
-**Phase 1: 搜索分析**
-- 现有 skills：4个，无编程相关 skill
-- 冲突检测：安全，可以创建
-
-**Phase 2: 优化执行**
-- 选择模板：模板 2（工具类）
-- 优化后 description：
-  ```yaml
-  description: "Toolkit for Python code generation using best practices and design patterns. Supports creating functions, classes, modules, and debugging with type hints and docstrings. Use when users request Python programming assistance (examples include writing algorithms, implementing data structures, or building applications), or any other Python development tasks"
-  ```
-- 质量检查：字符数 311，触发词 "Python" × 4次，括号示例 3个，兜底条款完整
-
-## 1.2 专家协同指导 [ECG]
-
-本 Skill 采用多专家协作模式，确保优化的全面性和准确性。
-
-### 1.2.1 专家定义与职责
-
-* **模式分析专家 (Pattern Analyst)**: 专注于分析现有 skill descriptions 的触发词分布、关键词频率、场景数量、字符长度等量化指标，识别现有 skill 群体的共性模式和特征。
-
-* **冲突检测专家 (Conflict Detector)**: 负责检测优化后的 description 是否与现有 skills 存在功能重叠、触发词冲突、领域竞争等问题，确保新 description 能在 skill 群体中找到独特定位。
-
-* **优化架构师 (Optimization Architect)**: 深度理解 SDS 标准和七大技巧，根据用户需求选择合适的模板，应用万能公式，确保优化后的 description 符合最佳实践标准。
-
-* **质量审计官 (Quality Auditor)**: 执行严格的质量检查，验证 description 是否符合 SDS 标准（格式、长度、禁止字符），触发词密度是否合理（2-5次），场景列表是否清晰，兜底条款是否完整。
-
-### 1.2.2 协作模式
-
-**模式选择**: 流水线模式
-
-**说明**:
-- **阶段 1（搜索分析）**：模式分析专家使用 Glob/Grep 工具搜索现有 skills → 提取 name 和 description → 分析触发词模式
-- **阶段 2（冲突检测）**：冲突检测专家分析现有 skill 群体 → 识别功能重叠和触发词冲突 → 确定新 description 的独特定位
-- **阶段 3（优化执行）**：优化架构师选择合适模板 → 应用万能公式和七大技巧 → 生成优化后的 description
-- **阶段 4（质量验证）**：质量审计官执行 KERNEL 检查清单 → 验证触发词密度、场景数量、字符长度 → 输出最终优化方案
+**协作模式**: 流水线模式
+- 阶段 1：模式分析专家搜索和分析 → 阶段 2：冲突检测专家识别冲突 → 阶段 3：优化架构师生成方案 → 阶段 4：质量审计官验证
 
 ---
 
@@ -184,8 +152,24 @@ Skill Description 是 Claude 判断是否使用 skill 的唯一依据，但许�
 
 ### Step 4: 分步执行策略
 
-* **Step 4.1: Phase 1 - 搜索分析**
-  - 使用 `Glob` 搜索 `.claude/skills/*/SKILL.md`，获取所有 skills 路径
+* **Step 4.1: Phase 1 - 路径发现与搜索分析**
+
+  **Step 1.1: 动态路径发现**
+  按优先级依次探测 `.claude` 目录位置：
+  1. 当前工作目录：`./.claude/skills/`
+  2. 用户 Home 目录：`~/.claude/skills/`
+  3. CherryStudio 目录：`$APPDATA/CherryStudio/.claude/skills/`（仅 Windows）
+  4. 环境变量：`$CLAUDE_SKILLS_PATH`
+  5. 如全部失败，询问用户提供有效路径
+
+  检测方法：
+  - `Bash(command="test -d '{candidate_path}/.claude/skills' && echo 'EXISTS'")`
+  - 或 `Glob(pattern="{candidate_path}/.claude/skills/*/SKILL.md")`
+
+  确定有效路径后，设置变量 `{claude_dir}` 供后续使用。
+
+  **Step 1.2: 搜索现有 skills**
+  - 使用 `Glob(pattern="{claude_dir}/skills/*/SKILL.md")`，获取所有 skills 路径
   - 使用 `Read` 读取每个 SKILL.md，提取 `name` 和 `description`
   - 使用 `Grep` 在现有 descriptions 中搜索触发词模式（如 "skill", "description", "use when"）
   - 输出量化指标报告：
@@ -201,27 +185,39 @@ Skill Description 是 Claude 判断是否使用 skill 的唯一依据，但许�
   - 输出冲突检测报告：安全 / 有风险 / 需调整
 
 * **Step 4.3: Phase 3 - 优化执行**
-  - **选择模板**：根据 skill 类型选择合适的五大模板之一
-  - **应用万能公式**：[功能概述] + [触发条件] + [场景列表] + [兜底条款]
-  - **应用七大技巧**：
-    - 技巧 1：编号列表（用 (1)(2)(3) 列举场景）
-    - 技巧 2：括号示例（提供具体示例）
-    - 技巧 3：关键词重复（核心词出现 2-5 次）
-    - 技巧 4：技术栈标注（括号内标注框架）
-    - 技巧 5：兜底条款（覆盖未列出场景）
-    - 技巧 6：否定约束（说明不做什么）
-    - 技巧 7：排除条件（明确不适用场景）
+  - **READ** `references/best_practices.md` 获取：
+    - 五大模板（Lines 44-127）
+    - 万能公式（Lines 27-42）
+    - 七大技巧（Lines 129-141）
+    - 触发短语库（Lines 143-172）
+  - 选择合适模板，应用万能公式和七大技巧
   - 输出优化后的 description
 
 * **Step 4.4: Phase 4 - 质量验证**
-  - 执行 SDS 检查清单：
-    - 格式检查：单行英文、引号包裹、< 1024 字符、不包含 `<` 或 `>`
-    - 内容检查：包含 "what" + "when"、有具体触发场景、有兜底条款、触发词 5+ 个
-  - 输出质量验证报告：通过 / 不通过 + 改进建议
+  - **参考** `references/best_practices.md` 质量检查清单（Lines 174-192）
+  - 执行 SDS 检查并输出验证报告
 
-* **Step 4.5: Phase 5 - 手册生成/更新**
-  - 检查 `E:/aiwork/001/.claude/skills/skill-trigger-handbook.md` 是否存在
-  - 读取现有手册内容（如果存在）
+* **Step 4.5: Phase 5 - 手册检测、生成/更新**
+
+  **Step 5.0: 手册完整性检测**
+  每次执行 Phase 5 前：
+  - 检查：`Bash(command="test -f '{claude_dir}/skills/skill-trigger-handbook.md' && echo 'EXISTS'")`
+  - 如果手册不存在或为空（< 50 字符），触发"完全重建流程"
+  - 如果手册存在，继续"常规更新流程"
+
+  **完全重建流程**（手册缺失时）：
+  1. `Glob(pattern="{claude_dir}/skills/*/SKILL.md")` 获取所有 skills
+  2. 读取每个 skill 的 frontmatter，提取 name 和 description
+  3. 分析 description，提取：
+     - 触发条件（"when", "use when" 等关键词后）
+     - 触发场景（编号列表或 "examples include"）
+     - 核心触发词（词频分析，出现 2+ 次）
+  4. 为每个 skill 生成标准化条目
+  5. 生成完整手册（头部、所有 skills、使用说明）
+  6. `Write(file_path="{claude_dir}/skills/skill-trigger-handbook.md", content="...")`
+
+  **常规更新流程**（手册存在时）：
+  - 读取现有手册
   - 添加/更新优化后的 skill 条目：
     - 触发条件
     - 触发示例
@@ -332,12 +328,13 @@ description: "[优化后的 description]"
 ```markdown
 ## 触发手册已更新
 
-手册文件：`E:/aiwork/001/.claude/skills/skill-trigger-handbook.md`
+手册文件：`{claude_dir}/skills/skill-trigger-handbook.md`
 
 更新内容：
 - [新增/更新] skill: [skill-name]
 - 更新时间: [timestamp]
 - 当前记录 skills 总数: [数量]
+- 手册状态: [新建/增量更新/完全重建]
 ```
 
 ---
@@ -346,24 +343,30 @@ description: "[优化后的 description]"
 
 本 Skill 需要调用以下工具完成任务：
 
-- **Glob** - 搜索 `.claude/skills/` 目录下的所有 skills
-  - 使用用法：`Glob(pattern="**/.claude/skills/*/SKILL.md")`
-  - 适用场景：Phase 1 搜索分析阶段
+- **Glob** - 搜索 skills 目录下的所有 skills
+  - 使用用法：`Glob(pattern="{claude_dir}/skills/*/SKILL.md")`
+  - 说明：`{claude_dir}` 为动态发现的路径变量
+  - 适用场景：Phase 1 路径发现与搜索分析阶段
 
 - **Read** - 读取每个 SKILL.md 文件，提取 name 和 description
-  - 使用用法：`Read(file_path="E:/aiwork/001/.claude/skills/[skill-name]/SKILL.md")`
-  - 适用场景：Phase 1 提取信息阶段
+  - 使用用法：`Read(file_path="{claude_dir}/skills/[skill-name]/SKILL.md")`
+  - 说明：只需读取 frontmatter（前 10 行）以获取元数据
+  - 适用场景：Phase 1 信息提取阶段
 
 - **Grep** - 在现有 descriptions 中搜索触发词模式
-  - 使用用法：`Grep(pattern="skill|description|use when", path=".claude/skills", output_mode="content")`
+  - 使用用法：`Grep(pattern="skill|description|use when", path="{claude_dir}/skills", output_mode="content")`
   - 适用场景：Phase 1 模式分析阶段
 
-- **Bash** - 执行 `ls` 命令查看目录结构（辅助验证）
-  - 使用用法：`Bash(command="ls -la E:/aiwork/001/.claude/skills")`
-  - 适用场景：可选，辅助验证目录结构
+- **Bash** - 执行路径探测和目录验证
+  - 使用用法：
+    - 路径探测：`Bash(command="test -d '{candidate_path}/.claude/skills' && echo 'EXISTS'")`
+    - 文件检测：`Bash(command="test -f '{claude_dir}/skills/skill-trigger-handbook.md' && echo 'EXISTS'")`
+    - 目录验证：`Bash(command="ls -la {claude_dir}/skills")`
+  - 适用场景：Phase 1 路径发现、Phase 5 手册完整性检测
 
 - **Write** - 创建和更新 `skill-trigger-handbook.md`
-  - 使用用法：`Write(file_path="E:/aiwork/001/.claude/skills/skill-trigger-handbook.md", content="...")`
+  - 使用用法：`Write(file_path="{claude_dir}/skills/skill-trigger-handbook.md", content="...")`
+  - 说明：支持完全重建（覆盖）和增量更新（修改现有内容）
   - 适用场景：Phase 5 手册生成/更新阶段
 
 **调用策略**：
